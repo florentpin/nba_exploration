@@ -132,8 +132,7 @@ st.title("Analyse des données NBA")
 tabs = st.tabs([
     "Lancers francs par match",
     "Moyenne matchs par saison",
-    "Évolution tirs et réussites",
-    "Comparaison tirs 2 pts vs 3 pts"
+    "Évolution tirs et réussites"
 ])
 
 with tabs[0]:
