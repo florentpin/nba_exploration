@@ -151,8 +151,8 @@ with tabs[2]:
     fig = create_shots_evolution_graph(df_game_nba)
     st.plotly_chart(fig, use_container_width=True)
 
-with tabs[3]:
-    st.header("Comparaison de la rentabilité et du volume des tirs 2 pts vs 3 pts")
-    fig = create_efficiency_graph(df_game_nba)
-    st.plotly_chart(fig, use_container_width=True)
+# with tabs[3]:
+#     st.header("Comparaison de la rentabilité et du volume des tirs 2 pts vs 3 pts")
+#     fig = create_efficiency_graph(df_game_nba)
+#     st.plotly_chart(fig, use_container_width=True)
 
