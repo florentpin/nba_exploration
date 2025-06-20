@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-import functions.py
+import functions 
 
 
 # Charger les données avec cache pour rapidité
