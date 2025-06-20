@@ -125,6 +125,13 @@ def create_efficiency_graph(df):
     )
     return fig
 
+
+def create_stats_per_team(df_game_nba):
+    
+
+    return fig
+
+
 # --- Interface Streamlit ---
 
 st.title("Analyse des données NBA")
@@ -132,7 +139,8 @@ st.title("Analyse des données NBA")
 tabs = st.tabs([
     "Lancers francs par match",
     "Moyenne matchs par saison",
-    "Évolution tirs et réussites"
+    "Évolution tirs et réussites",
+    "Statistiques par équipe"
 ])
 
 with tabs[0]:
@@ -149,6 +157,69 @@ with tabs[2]:
     st.header("Évolution moyenne des tirs et réussites (1990-2023)")
     fig = create_shots_evolution_graph(df_game_nba)
     st.plotly_chart(fig, use_container_width=True)
+
+with tabs[3]:
+
+    st.header("Statistiques par équipe")
+
+    equipe_selectionnee = st.selectbox(
+        "Quelle équipe veux-tu analyser?",
+        ('Detroit Pistons', 'Los Angeles Lakers',
+         'Golden State Warriors', 'Philadelphia 76ers',
+         'Chicago Bulls', 'Boston Celtics', 'Cleveland Cavaliers',
+         'Atlanta Hawks', 'Portland Trail Blazers',
+         'Sacramento Kings', 'Charlotte Hornets', 
+        'Miami Heat',  'Orlando Magic', 'Minnesota Timberwolves', 'Toronto Raptors', 
+        'Oklahoma City Thunder', 'New York Knicks', 'Denver Nuggets', 'Milwaukee Bucks', 'Phoenix Suns',
+           'San Antonio Spurs', 'Indiana Pacers', 'Utah Jazz', 'Dallas Mavericks',
+        'Los Angeles Clippers' , 'Washington Wizards', 'Memphis Grizzlies', 
+        'Oklahoma City Thunder','Brooklyn Nets', 'New Orleans Pelicans',
+     ),
+    )
+
+    # Filter only home games for selected team
+    df_team_home = df_game_nba[df_game_nba['team_name_home'] == equipe_selectionnee].copy()
+
+    # Convert game_date to datetime
+    df_team_home['game_date'] = pd.to_datetime(df_team_home['game_date'])
+
+    # Extract year
+    df_team_home['year'] = df_team_home['game_date'].dt.year
+
+    # Compute win flag
+    df_team_home['win'] = df_team_home['wl_home'] == 'W'
+
+    # Group by year and calculate win percentage
+    win_stats = df_team_home.groupby('year')['win'].mean().reset_index()
+    win_stats['win_percent'] = win_stats['win'] * 100
+
+    # Plot
+    fig_win_pct = px.line(
+        win_stats,
+        x='year',
+        y='win_percent',
+        title=f"% de victoires à domicile par saison : {equipe_selectionnee}",
+        markers=True,
+        labels={'year': 'Année', 'win_percent': 'Pourcentage de victoires (%)'}
+    )
+
+    # Update layout with y-axis range and add 50% reference line
+    fig_win_pct.update_layout(
+        yaxis=dict(range=[0, 110]),
+        shapes=[
+            dict(
+                type='line',
+                x0=win_stats['year'].min(),
+                x1=win_stats['year'].max(),
+                y0=50,
+                y1=50,
+                line=dict(color='gray', width=2, dash='dash')
+            )
+        ]
+    )
+
+    st.plotly_chart(fig_win_pct, use_container_width=True)
+
 
 # with tabs[3]:
 #     st.header("Comparaison de la rentabilité et du volume des tirs 2 pts vs 3 pts")
